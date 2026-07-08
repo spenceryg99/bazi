@@ -12,15 +12,6 @@ export const KE_MAP: Record<Wuxing, Wuxing> = {
   木: '土', 火: '金', 土: '水', 金: '木', 水: '火',
 }
 
-/** 关系名（用于出题/讲解） */
-export const RELATION_LABEL: Record<string, string> = {
-  same: '同我（比劫）',
-  sheng_me: '生我（印星）',
-  me_sheng: '我生（食伤）',
-  me_ke: '我克（财星）',
-  ke_me: '克我（官杀）',
-}
-
 /** 给定日主五行与目标五行，返回十神大类及正偏判定所需的阴阳关系 */
 export function getRelation(dmElem: Wuxing, targetElem: Wuxing): string {
   if (targetElem === dmElem) return 'same'
@@ -143,11 +134,4 @@ export const SI_KU: Record<string, Wuxing> = {
   丑: '金', // 金库（巳酉丑）
 }
 
-/** 五行配色 */
-export const WUXING_COLOR: Record<Wuxing, string> = {
-  木: '#3fa66a',
-  火: '#e0564b',
-  土: '#c89a3a',
-  金: '#9aa3ad',
-  水: '#3b7dd8',
-}
+

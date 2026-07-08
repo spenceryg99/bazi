@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import QuestionCard from '@/components/QuestionCard.vue'
-import { getRandomQuestions, getQuestionCount, getRelationQuestions, getLunmingQuestions, type QuizScope, type RelationFilter, type LunmingFilter } from '@/composables/useQuiz'
+import { getRandomQuestions, getQuestionCount, getRelationQuestions, getLunmingQuestions, shuffle, type QuizScope, type RelationFilter, type LunmingFilter } from '@/composables/useQuiz'
 import { useProgress } from '@/composables/useProgress'
 import { useWrongBook } from '@/composables/useWrongBook'
 import { RELATIONS } from '@/data/dizhi-relations'
@@ -57,7 +57,7 @@ function start() {
   // 不足10则全取
   queue.value = pool.length > 10 ? pool.slice(0, 10) : pool
   // 打乱
-  queue.value = [...queue.value].sort(() => Math.random() - 0.5)
+  queue.value = shuffle(queue.value)
   idx.value = 0
   correctCount.value = 0
   finished.value = false

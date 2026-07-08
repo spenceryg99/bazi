@@ -59,7 +59,6 @@ export type QuestionField =
   | 'category'
   | 'isPure'
   | 'canggan'
-  | 'hour'
 
 /** 一道题 */
 export interface Question {

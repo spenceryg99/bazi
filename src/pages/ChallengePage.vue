@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted } from 'vue'
 import QuestionCard from '@/components/QuestionCard.vue'
-import { getQuestionCount, shuffle, type QuizScope } from '@/composables/useQuiz'
+import { getQuestionPool, shuffle, type QuizScope } from '@/composables/useQuiz'
 import { useProgress } from '@/composables/useProgress'
 import { useWrongBook } from '@/composables/useWrongBook'
-import { TIANGAN } from '@/data/tiangan'
-import { DIZHI } from '@/data/dizhi'
-import { getQuestionPool } from '@/composables/useQuiz'
 import type { Question } from '@/data/types'
 
 const { record } = useProgress()

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { SHENG_MAP, KE_MAP } from '@/data/advanced'
 import {
   WU_GE, SHULI_81, SANCAI_CONFIGS, CONTROVERSY, RELATION_TO_BAZI,
   strokeToWuxing, getShuli,
@@ -48,10 +49,8 @@ function matchSancai(a: string, b: string, c: string): string {
   const found = SANCAI_CONFIGS.find((x) => x.pattern === pat)
   if (found) return found.luck
   // 简单判断：五行相同为吉（比和），相生为吉，否则中性/凶
-  const SHENG: Record<string,string> = { 木:'火',火:'土',土:'金',金:'水',水:'木' }
-  const KE: Record<string,string> = { 木:'土',土:'水',水:'火',火:'金',金:'木' }
-  const r1 = a === b ? '比' : SHENG[a] === b ? '生' : KE[a] === b ? '克' : ''
-  const r2 = b === c ? '比' : SHENG[b] === c ? '生' : KE[b] === c ? '克' : ''
+  const r1 = a === b ? '比' : SHENG_MAP[a as keyof typeof SHENG_MAP] === b ? '生' : KE_MAP[a as keyof typeof KE_MAP] === b ? '克' : ''
+  const r2 = b === c ? '比' : SHENG_MAP[b as keyof typeof SHENG_MAP] === c ? '生' : KE_MAP[b as keyof typeof KE_MAP] === c ? '克' : ''
   if (r1 === '克' && r2 === '克') return '凶'
   if (r1 === '生' && r2 === '生') return '吉'
   return '半吉'

@@ -178,11 +178,6 @@ export const RELATIONS: Relation[] = [
   },
 ]
 
-/** 根据 id 取关系 */
-export function getRelation(id: RelationId): Relation {
-  return RELATIONS.find((r) => r.id === id)!
-}
-
 /** 力量层级总排序（强→弱） */
 export const POWER_ORDER = '三会局 > 三合局 > 半合 > 六合(化气) > 六合(不化) > 三刑 > 六冲 > 六害'
 

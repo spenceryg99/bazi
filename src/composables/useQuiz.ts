@@ -118,9 +118,6 @@ function buildDizhiExplanation(d: typeof DIZHI[number], field: QuestionField): s
     case 'canggan':
       core = `「${d.char}」藏干：${d.canggan.map((c) => `${c.stem}(${c.wuxing},${c.level})`).join(' / ')}。`
       break
-    case 'hour':
-      core = `「${d.char}」时辰：${d.hour}。`
-      break
   }
   return `${core}\n\n【说文】${e.shuowen}\n【字形】${e.guhu}\n【本义】${e.benyi}\n【为何选用】${e.whyChosen}\n【记忆】${d.memory}`
 }

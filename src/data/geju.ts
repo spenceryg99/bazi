@@ -168,6 +168,7 @@ export const BRANCH_MAIN_STEM: Record<string, { stem: string; wuxing: string }> 
 export function computeShishenGeju(
   dmWx: string, tgWx: string, sameYy: boolean,
 ): { shishen: string; geju: string } {
+  // Imported at runtime from advanced.ts via caller — using local refs for standalone data module
   const SHENG: Record<string, string> = { 木: '火', 火: '土', 土: '金', 金: '水', 水: '木' }
   const KE: Record<string, string> = { 木: '土', 土: '水', 水: '火', 火: '金', 金: '木' }
 
