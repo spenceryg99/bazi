@@ -19,6 +19,7 @@ const scopeOptions: { v: QuizScope; label: string }[] = [
   { v: 'relations', label: '关系' },
   { v: 'lunming', label: '论命' },
   { v: 'xingming', label: '姓名学' },
+  { v: 'zhenquan', label: '子平真诠' },
   { v: 'advanced', label: '进阶' },
 ]
 

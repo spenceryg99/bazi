@@ -1124,7 +1124,7 @@ function genXingmingQuestions(): Question[] {
 
 // ===== 统一出题入口 =====
 
-export type QuizScope = 'tiangan' | 'dizhi' | 'canggan' | 'relations' | 'lunming' | 'xingming' | 'advanced' | 'all'
+export type QuizScope = 'tiangan' | 'dizhi' | 'canggan' | 'relations' | 'lunming' | 'xingming' | 'advanced' | 'zhenquan' | 'all'
 
 export type RelationFilter = 'all' | RelationId
 export type LunmingFilter = 'all' | 'geju' | 'yongshen'
@@ -1151,7 +1151,7 @@ const ALL_QUESTIONS: Question[] = [
   ...genTianganQuestions(), ...genDizhiQuestions(),
   ...genCangganQuestions(), ...genRelationQuestions(),
   ...genLunmingQuestions(), ...genXingmingQuestions(),
-  ...genAdvancedQuestions(),
+  ...genAdvancedQuestions(), ...genZhenquanQuestions(),
 ]
 
 export function getQuestionPool(scope: QuizScope): Question[] {
@@ -1163,6 +1163,7 @@ export function getQuestionPool(scope: QuizScope): Question[] {
     case 'lunming': return genLunmingQuestions()
     case 'xingming': return genXingmingQuestions()
     case 'advanced': return genAdvancedQuestions()
+    case 'zhenquan': return genZhenquanQuestions()
     case 'all': default: return [...ALL_QUESTIONS]
   }
 }
@@ -1186,6 +1187,24 @@ export function getAllQuestionPool(): Question[] {
 /** 按ID查题 */
 export function getQuestionById(id: string): Question | undefined {
   return getAllQuestionPool().find((q) => q.id === id)
+}
+
+// ===== 子平真诠题库 =====
+import { ZHENQUAN_QUESTIONS } from '@/data/zhenquan'
+
+function genZhenquanQuestions(): Question[] {
+  return ZHENQUAN_QUESTIONS.map((q) => ({
+    id: q.id,
+    subject: q.category,
+    subjectType: 'tiangan' as const,
+    field: 'advanced' as const,
+    fieldLabel: '子平真诠',
+    prompt: q.prompt,
+    options: q.options,
+    answer: q.answer,
+    explanation: q.explanation,
+    category: q.category,
+  }))
 }
 
 export { shuffle }
