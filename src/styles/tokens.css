@@ -1,0 +1,72 @@
+:root {
+  /* 背景 - 深色墨系，护眼专注 */
+  --bg: #0d0d10;
+  --bg-elev: #16161b;
+  --bg-card: #1c1c22;
+  --bg-card-hover: #23232b;
+  --border: #2a2a33;
+  --border-soft: #20202a;
+
+  /* 文字 */
+  --text: #ececF2;
+  --text-soft: #a7a7b3;
+  --text-dim: #6b6b78;
+
+  /* 五行配色 */
+  --wx-mu: #3fa66a;   /* 木 绿 */
+  --wx-huo: #e0564b;  /* 火 红 */
+  --wx-tu: #c89a3a;   /* 土 黄 */
+  --wx-jin: #9aa3ad;  /* 金 灰 */
+  --wx-shui: #3b7dd8; /* 水 蓝 */
+
+  /* 状态 */
+  --correct: #3fa66a;
+  --wrong: #e0564b;
+  --accent: #b88dff;
+
+  /* 圆角 */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-full: 999px;
+
+  /* 间距 */
+  --sp: 16px;
+
+  /* 安全区 */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
+          "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body, #app {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+body { overflow: hidden; }
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+/* 五行色工具类 */
+.wx-木 { color: var(--wx-mu); }
+.wx-火 { color: var(--wx-huo); }
+.wx-土 { color: var(--wx-tu); }
+.wx-金 { color: var(--wx-jin); }
+.wx-水 { color: var(--wx-shui); }
+
+.bg-wx-木 { background: var(--wx-mu); }
+.bg-wx-火 { background: var(--wx-huo); }
+.bg-wx-土 { background: var(--wx-tu); }
+.bg-wx-金 { background: var(--wx-jin); }
+.bg-wx-水 { background: var(--wx-shui); }
+
+/* 滚动条隐藏 */
+::-webkit-scrollbar { width: 0; height: 0; }
