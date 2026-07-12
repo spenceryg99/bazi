@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import QuestionCard from '@/components/QuestionCard.vue'
-import { getRandomQuestions, getQuestionCount, getRelationQuestions, getLunmingQuestions, shuffle, type QuizScope, type RelationFilter, type LunmingFilter } from '@/composables/useQuiz'
+import { getRandomQuestions, getQuestionCount, getRelationQuestions, getLunmingQuestions, getShishenQuestions, shuffle, type QuizScope, type RelationFilter, type LunmingFilter } from '@/composables/useQuiz'
 import { useProgress } from '@/composables/useProgress'
 import { useWrongBook } from '@/composables/useWrongBook'
 import { RELATIONS } from '@/data/dizhi-relations'
 import type { Question } from '@/data/types'
+
+const TIANGAN_STEMS = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸']
 
 const { record } = useProgress()
 const { markWrong } = useWrongBook()
@@ -20,6 +22,7 @@ const scopeOptions: { v: QuizScope; label: string }[] = [
   { v: 'lunming', label: '论命' },
   { v: 'xingming', label: '姓名学' },
   { v: 'zhenquan', label: '子平真诠' },
+  { v: 'shishen', label: '十神' },
   { v: 'advanced', label: '进阶' },
 ]
 
@@ -36,6 +39,8 @@ const lmFilterOptions = [
   { v: 'geju' as const, label: '格局' },
   { v: 'yongshen' as const, label: '用神' },
 ]
+// 十神日主选择
+const selectedDm = ref('')
 
 const started = ref(false)
 const queue = ref<Question[]>([])
@@ -47,11 +52,14 @@ const current = computed(() => queue.value[idx.value] ?? null)
 const total = computed(() => queue.value.length)
 
 function start() {
+  if (scope.value === 'shishen' && !selectedDm.value) return
   let pool: Question[]
   if (scope.value === 'relations') {
     pool = getRelationQuestions(relFilter.value)
   } else if (scope.value === 'lunming') {
     pool = getLunmingQuestions(lmFilter.value)
+  } else if (scope.value === 'shishen') {
+    pool = getShishenQuestions(selectedDm.value)
   } else {
     pool = getRandomQuestions(scope.value, 10)
   }
@@ -109,6 +117,7 @@ function again() {
           ><span>{{ o.label }}</span><span class="cnt">{{
             o.v === 'relations' ? getRelationQuestions(relFilter).length
             : o.v === 'lunming' ? getLunmingQuestions(lmFilter).length
+            : o.v === 'shishen' ? (selectedDm ? getShishenQuestions(selectedDm).length : 0)
             : getQuestionCount(o.v)
           }}</span></button>
         </div>
@@ -130,9 +139,21 @@ function again() {
             @click="lmFilter = o.v"
           >{{ o.label }}</button>
         </div>
+        <!-- 十神日主选择 -->
+        <div v-if="scope === 'shishen'" class="sub-filter dm-selector">
+          <p class="lab">选择日主</p>
+          <div class="dm-grid">
+            <button
+              v-for="s in TIANGAN_STEMS"
+              :key="s"
+              :class="{ on: selectedDm === s }"
+              @click="selectedDm = s"
+            >{{ s }}</button>
+          </div>
+        </div>
       </div>
 
-      <button class="go" @click="start">开始答题</button>
+      <button class="go" :class="{ disabled: scope === 'shishen' && !selectedDm }" @click="start">开始答题</button>
     </div>
 
     <!-- 答题中 -->
@@ -204,6 +225,20 @@ h1 { font-size: 22px; font-weight: 700; }
 }
 .sub-filter button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+.dm-selector { flex-direction: column; align-items: stretch; }
+.dm-selector .lab { font-size: 12px; color: var(--text-dim); margin-bottom: 4px; }
+.dm-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.dm-grid button {
+  padding: 10px 0;
+  border-radius: var(--r-md);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-soft);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+.dm-grid button.on { border-color: var(--accent); color: var(--accent); background: rgba(255,193,84,0.08); }
+
 .go {
   width: 100%;
   padding: 16px;
@@ -214,6 +249,7 @@ h1 { font-size: 22px; font-weight: 700; }
   font-weight: 600;
 }
 .go:active { transform: scale(0.98); }
+.go.disabled { opacity: 0.4; pointer-events: none; }
 
 .play { display: flex; flex-direction: column; gap: 16px; }
 .prog { display: flex; flex-direction: column; gap: 8px; }

@@ -1124,7 +1124,7 @@ function genXingmingQuestions(): Question[] {
 
 // ===== 统一出题入口 =====
 
-export type QuizScope = 'tiangan' | 'dizhi' | 'canggan' | 'relations' | 'lunming' | 'xingming' | 'advanced' | 'zhenquan' | 'all'
+export type QuizScope = 'tiangan' | 'dizhi' | 'canggan' | 'relations' | 'lunming' | 'xingming' | 'advanced' | 'zhenquan' | 'shishen' | 'all'
 
 export type RelationFilter = 'all' | RelationId
 export type LunmingFilter = 'all' | 'geju' | 'yongshen'
@@ -1164,6 +1164,7 @@ export function getQuestionPool(scope: QuizScope): Question[] {
     case 'xingming': return genXingmingQuestions()
     case 'advanced': return genAdvancedQuestions()
     case 'zhenquan': return genZhenquanQuestions()
+    case 'shishen': return []
     case 'all': default: return [...ALL_QUESTIONS]
   }
 }
@@ -1205,6 +1206,85 @@ function genZhenquanQuestions(): Question[] {
     explanation: q.explanation,
     category: q.category,
   }))
+}
+
+// ===== 十神专题（日主 × 月令 × 透干，混合十神关系 + 格局识别）=====
+
+const SHISHEN_TEN_GODS = ['比肩', '劫财', '正印', '偏印（枭神）', '食神', '伤官', '正财', '偏财', '正官', '七杀（偏官）']
+
+const SHISHEN_TO_GEJU: Record<string, string> = {
+  '比肩': '建禄格',
+  '劫财': '月劫格',
+  '食神': '食神格',
+  '伤官': '伤官格',
+  '正财': '正财格',
+  '偏财': '偏财格',
+  '正官': '正官格',
+  '七杀（偏官）': '七杀格',
+  '正印': '正印格',
+  '偏印（枭神）': '偏印格',
+}
+
+const SHISHEN_GEJU_POOL = Object.values(SHISHEN_TO_GEJU)
+
+function buildShishenGodExplanation(dm: string, tg: string, branch: string, tenGod: string): string {
+  const dmInfo = STEM_INFO[dm]
+  const tgInfo = STEM_INFO[tg]
+  const samePolarity = dmInfo.yinyang === tgInfo.yinyang
+  const rel =
+    tgInfo.wuxing === dmInfo.wuxing ? '同我'
+    : SHENG_MAP[tgInfo.wuxing] === dmInfo.wuxing ? '生我'
+    : SHENG_MAP[dmInfo.wuxing] === tgInfo.wuxing ? '我生'
+    : KE_MAP[dmInfo.wuxing] === tgInfo.wuxing ? '我克'
+    : '克我'
+  return `日主${dm}（${dmInfo.yinyang}${dmInfo.wuxing}），月令${branch}，${tg}（${tgInfo.yinyang}${tgInfo.wuxing}）透出。\n五行关系：${rel}。阴阳${samePolarity ? '同性→偏（七杀/偏印/食神/偏财/比肩）' : '异性→正（正官/正印/伤官/正财/劫财）'}。\n→ 十神：${tenGod}`
+}
+
+function buildShishenGejuExplanation(dm: string, branch: string, tg: string, tenGod: string, geju: string): string {
+  const dmInfo = STEM_INFO[dm]
+  const tgInfo = STEM_INFO[tg]
+  return `日主${dm}（${dmInfo.yinyang}${dmInfo.wuxing}）生于${branch}月。\n${branch}中藏干「${tg}（${tgInfo.yinyang}${tgInfo.wuxing}）」透出。\n${tg}对日主${dm}为「${tenGod}」→ 格局立「${geju}」\n\n格局口诀：月令透干对日主定十神 → 十神定格。`
+}
+
+function genShishenQuestions(dm: string): Question[] {
+  const qs: Question[] = []
+  for (const dz of DIZHI) {
+    for (const cg of dz.canggan) {
+      const tenGod = getTenGod(dm, cg.stem)
+      const geju = SHISHEN_TO_GEJU[tenGod] || '正格'
+
+      qs.push({
+        id: `ss10-god-${dm}-${dz.char}-${cg.stem}`,
+        subject: `${dm}/${dz.char}/${cg.stem}`,
+        subjectType: 'tiangan',
+        field: 'advanced',
+        fieldLabel: '十神',
+        category: '十神关系',
+        prompt: `日主「${dm}」，月令「${dz.char}」，透「${cg.stem}」\n日主「${dm}」与「${cg.stem}」是什么十神关系？`,
+        options: makeOptions(tenGod, SHISHEN_TEN_GODS),
+        answer: tenGod,
+        explanation: buildShishenGodExplanation(dm, cg.stem, dz.char, tenGod),
+      })
+
+      qs.push({
+        id: `ss10-geju-${dm}-${dz.char}-${cg.stem}`,
+        subject: `${dm}/${dz.char}/${cg.stem}`,
+        subjectType: 'tiangan',
+        field: 'advanced',
+        fieldLabel: '格局',
+        category: '格局识别',
+        prompt: `日主「${dm}」，月令「${dz.char}」，透「${cg.stem}」\n这是什么格局？`,
+        options: makeOptions(geju, SHISHEN_GEJU_POOL),
+        answer: geju,
+        explanation: buildShishenGejuExplanation(dm, dz.char, cg.stem, tenGod, geju),
+      })
+    }
+  }
+  return qs
+}
+
+export function getShishenQuestions(dm: string): Question[] {
+  return genShishenQuestions(dm)
 }
 
 export { shuffle }
