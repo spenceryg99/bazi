@@ -53,20 +53,21 @@ const total = computed(() => queue.value.length)
 
 function start() {
   if (scope.value === 'shishen' && !selectedDm.value) return
-  let pool: Question[]
-  if (scope.value === 'relations') {
-    pool = getRelationQuestions(relFilter.value)
-  } else if (scope.value === 'lunming') {
-    pool = getLunmingQuestions(lmFilter.value)
-  } else if (scope.value === 'shishen') {
-    pool = getShishenQuestions(selectedDm.value)
+  if (scope.value === 'shishen') {
+    // 十神：一次出全部题目，全量训练
+    queue.value = shuffle(getShishenQuestions(selectedDm.value))
   } else {
-    pool = getRandomQuestions(scope.value, 10)
+    let pool: Question[]
+    if (scope.value === 'relations') {
+      pool = getRelationQuestions(relFilter.value)
+    } else if (scope.value === 'lunming') {
+      pool = getLunmingQuestions(lmFilter.value)
+    } else {
+      pool = getRandomQuestions(scope.value, 10)
+    }
+    queue.value = pool.length > 10 ? pool.slice(0, 10) : pool
+    queue.value = shuffle(queue.value)
   }
-  // 不足10则全取
-  queue.value = pool.length > 10 ? pool.slice(0, 10) : pool
-  // 打乱
-  queue.value = shuffle(queue.value)
   idx.value = 0
   correctCount.value = 0
   finished.value = false

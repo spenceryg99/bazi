@@ -1227,7 +1227,7 @@ const SHISHEN_TO_GEJU: Record<string, string> = {
 
 const SHISHEN_GEJU_POOL = Object.values(SHISHEN_TO_GEJU)
 
-function buildShishenGodExplanation(dm: string, tg: string, branch: string, tenGod: string): string {
+function buildShishenGodExplanationSimple(dm: string, tg: string, tenGod: string): string {
   const dmInfo = STEM_INFO[dm]
   const tgInfo = STEM_INFO[tg]
   const samePolarity = dmInfo.yinyang === tgInfo.yinyang
@@ -1237,7 +1237,7 @@ function buildShishenGodExplanation(dm: string, tg: string, branch: string, tenG
     : SHENG_MAP[dmInfo.wuxing] === tgInfo.wuxing ? '我生'
     : KE_MAP[dmInfo.wuxing] === tgInfo.wuxing ? '我克'
     : '克我'
-  return `日主${dm}（${dmInfo.yinyang}${dmInfo.wuxing}），月令${branch}，${tg}（${tgInfo.yinyang}${tgInfo.wuxing}）透出。\n五行关系：${rel}。阴阳${samePolarity ? '同性→偏（七杀/偏印/食神/偏财/比肩）' : '异性→正（正官/正印/伤官/正财/劫财）'}。\n→ 十神：${tenGod}`
+  return `日主${dm}（${dmInfo.yinyang}${dmInfo.wuxing}）见${tg}（${tgInfo.yinyang}${tgInfo.wuxing}）。\n五行关系：${rel}。阴阳${samePolarity ? '同性→偏（七杀/偏印/食神/偏财/比肩）' : '异性→正（正官/正印/伤官/正财/劫财）'}。\n→ 十神：${tenGod}`
 }
 
 function buildShishenGejuExplanation(dm: string, branch: string, tg: string, tenGod: string, geju: string): string {
@@ -1248,24 +1248,30 @@ function buildShishenGejuExplanation(dm: string, branch: string, tg: string, ten
 
 function genShishenQuestions(dm: string): Question[] {
   const qs: Question[] = []
+  const stems = Object.keys(STEM_INFO)
+
+  // Type A: 十神关系 — 日主 vs 全部天干（无月令干扰，纯练条件反射）
+  for (const tg of stems) {
+    const tenGod = getTenGod(dm, tg)
+    qs.push({
+      id: `ss10-god-${dm}-${tg}`,
+      subject: `${dm}/${tg}`,
+      subjectType: 'tiangan',
+      field: 'advanced',
+      fieldLabel: '十神',
+      category: '十神关系',
+      prompt: `「${dm}」见「${tg}」，是什么十神关系？`,
+      options: makeOptions(tenGod, SHISHEN_TEN_GODS),
+      answer: tenGod,
+      explanation: buildShishenGodExplanationSimple(dm, tg, tenGod),
+    })
+  }
+
+  // Type B: 格局识别 — 日主 × 12 地支 × 每个藏干（需要月令+透干上下文）
   for (const dz of DIZHI) {
     for (const cg of dz.canggan) {
       const tenGod = getTenGod(dm, cg.stem)
       const geju = SHISHEN_TO_GEJU[tenGod] || '正格'
-
-      qs.push({
-        id: `ss10-god-${dm}-${dz.char}-${cg.stem}`,
-        subject: `${dm}/${dz.char}/${cg.stem}`,
-        subjectType: 'tiangan',
-        field: 'advanced',
-        fieldLabel: '十神',
-        category: '十神关系',
-        prompt: `日主「${dm}」，月令「${dz.char}」，透「${cg.stem}」\n日主「${dm}」与「${cg.stem}」是什么十神关系？`,
-        options: makeOptions(tenGod, SHISHEN_TEN_GODS),
-        answer: tenGod,
-        explanation: buildShishenGodExplanation(dm, cg.stem, dz.char, tenGod),
-      })
-
       qs.push({
         id: `ss10-geju-${dm}-${dz.char}-${cg.stem}`,
         subject: `${dm}/${dz.char}/${cg.stem}`,
@@ -1280,6 +1286,7 @@ function genShishenQuestions(dm: string): Question[] {
       })
     }
   }
+
   return qs
 }
 
