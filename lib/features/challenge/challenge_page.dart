@@ -111,7 +111,7 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
   Widget get _setup => Scaffold(
         appBar: AppBar(title: const Text('⚡ 60秒挑战')),
         body: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -181,7 +181,7 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
         body: _current == null
             ? const Center(child: CircularProgressIndicator())
             : ListView(
-                padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                 children: [
                   QuestionCard(
                     key: ValueKey(_current!.id),

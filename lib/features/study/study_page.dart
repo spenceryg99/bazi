@@ -88,7 +88,7 @@ class StudyPage extends StatelessWidget {
 
   Widget _grid(List<(String, Object)> items) {
     return GridView.count(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
       crossAxisCount: 4,
       mainAxisSpacing: 10,
       crossAxisSpacing: 10,

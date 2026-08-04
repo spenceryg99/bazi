@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../data/types.dart';
 import '../../core/app_colors.dart';
+import '../../data/types.dart';
+import '../../shared/utils/haptic.dart';
 
 class QuestionCard extends StatefulWidget {
   const QuestionCard({
@@ -58,11 +59,19 @@ class _QuestionCardState extends State<QuestionCard> {
 
   void _choose(String opt) {
     if (_answered) return;
+    Haptic.tap();
     setState(() {
       _selected = opt;
       _answered = true;
     });
     widget.onAnswered?.call(_isCorrect);
+    if (widget.showExplanation) {
+      if (_isCorrect) {
+        Haptic.correct();
+      } else {
+        Haptic.wrong();
+      }
+    }
     final delay = _isCorrect ? widget.correctAutoMs : widget.wrongAutoMs;
     if (delay > 0) {
       _timer = Timer(Duration(milliseconds: delay), _doNext);

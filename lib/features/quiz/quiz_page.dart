@@ -55,7 +55,7 @@ class _QuizPageState extends ConsumerState<QuizPage> {
   Widget get _setup => Scaffold(
         appBar: AppBar(title: const Text('答题训练')),
         body: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
           children: [
             const Text('每轮 10 题，答错附详细讲解',
                 style: TextStyle(fontSize: 13, color: AppColors.textDim)),
@@ -154,7 +154,7 @@ class _QuizPageState extends ConsumerState<QuizPage> {
     return Scaffold(
       appBar: AppBar(title: Text('${session.index + 1} / ${session.total}　✓ ${session.correctCount}')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
         children: [
           LinearProgressIndicator(
             value: (session.index + 1) / session.total,
