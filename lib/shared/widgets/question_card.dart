@@ -183,7 +183,8 @@ class _QuestionCardState extends State<QuestionCard> {
     return GestureDetector(
       onTap: () => _choose(opt),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         decoration: BoxDecoration(
           color: color != null

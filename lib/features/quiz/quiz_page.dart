@@ -6,6 +6,7 @@ import '../../domain/quiz_generator.dart';
 import '../../providers/progress_provider.dart';
 import '../../providers/quiz_session_provider.dart';
 import '../../providers/wrong_book_provider.dart';
+import '../../shared/widgets/large_title_scroll.dart';
 import '../../shared/widgets/question_card.dart';
 
 class QuizPage extends ConsumerStatefulWidget {
@@ -53,9 +54,8 @@ class _QuizPageState extends ConsumerState<QuizPage> {
   }
 
   Widget get _setup => Scaffold(
-        appBar: AppBar(title: const Text('答题训练')),
-        body: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+        body: LargeTitleScroll(
+          title: '答题训练',
           children: [
             const Text('每轮 10 题，答错附详细讲解',
                 style: TextStyle(fontSize: 13, color: AppColors.textDim)),

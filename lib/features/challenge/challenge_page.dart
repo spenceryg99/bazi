@@ -8,6 +8,7 @@ import '../../data/types.dart';
 import '../../domain/quiz_generator.dart';
 import '../../providers/progress_provider.dart';
 import '../../providers/wrong_book_provider.dart';
+import '../../shared/widgets/large_title_scroll.dart';
 import '../../shared/widgets/question_card.dart';
 
 class ChallengePage extends ConsumerStatefulWidget {
@@ -109,36 +110,30 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
   }
 
   Widget get _setup => Scaffold(
-        appBar: AppBar(title: const Text('⚡ 60秒挑战')),
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-              const Text('限时 60 秒，连击加倍，看你能答多少',
-                  style: TextStyle(fontSize: 13, color: AppColors.textDim)),
-              const SizedBox(height: 24),
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 4,
-                mainAxisSpacing: 6,
-                crossAxisSpacing: 6,
-                childAspectRatio: 2.2,
-                children: [
-                  for (final o in _scopes)
-                    _scopeChip(o.$1, o.$2),
-                ],
-              ),
-              const Spacer(),
-              FilledButton(
-                onPressed: _start,
-                child: const Text('开始挑战'),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
+        body: LargeTitleScroll(
+          title: '挑战',
+          children: [
+            const Text('限时 60 秒，连击加倍，看你能答多少',
+                style: TextStyle(fontSize: 15, color: AppColors.textSecondary)),
+            const SizedBox(height: 20),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 4,
+              mainAxisSpacing: 6,
+              crossAxisSpacing: 6,
+              childAspectRatio: 2.2,
+              children: [
+                for (final o in _scopes)
+                  _scopeChip(o.$1, o.$2),
+              ],
+            ),
+            const SizedBox(height: 28),
+            FilledButton(
+              onPressed: _start,
+              child: const Text('开始挑战'),
+            ),
+          ],
         ),
       );
 
