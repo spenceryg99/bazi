@@ -1,38 +1,59 @@
-# 干支刷题学习 App
+# 干支刷题 App（Flutter）
 
-纯前端「天干地支 / 命理」刷题+学习 App。Vue 3 + Vite 5 + TypeScript，纯静态，无后端。
+天干地支 / 命理 刷题 + 学习 Android App。Flutter + Riverpod + go_router，**纯本地无后端**。
+
+> 本仓库由 Vue 版本重构而来，原 Vue 源码保留在 `legacy_vue/` 作数据迁移参考，迁移完成后可删除。
 
 ## 命令
 
 | 命令 | 含义 |
 |------|------|
-| `npm run dev` | 开发服务器 (vite, port 5174) |
-| `npm run build` | `vue-tsc --noEmit && vite build` (类型检查 + 构建) |
-| `npm run build:only` | 仅构建，跳过类型检查 |
-| `npm run preview` | 预览构建产物 |
+| `flutter pub get` | 安装依赖 |
+| `flutter run` | 运行（需连接设备/模拟器） |
+| `flutter analyze` | 静态分析（提交前必跑） |
+| `flutter test` | 单元/Widget 测试 |
+| `flutter build apk --release` | 构建 release APK |
 
-无测试框架，无 linter/formatter 配置。
+本地无 Android SDK 时无需运行，直接推送后由 GitHub Actions 构建。
 
 ## 架构
 
-- 入口: `src/main.ts` → `App.vue` + 7 个懒加载路由页面
-- 路由: `createWebHistory()` —— 部署需 nginx 回退到 `index.html`
-- 路径别名: `@/` → `src/`
-- 数据层: `src/data/` 纯 TS 知识库（类型安全，无运行时依赖）
-- 逻辑层: `src/composables/` (useQuiz / useProgress / useWrongBook)
-- 样式: `src/styles/tokens.css` CSS 变量 + 五行色工具类；无 CSS 框架
-- 持久化: localStorage (答题统计 + 错题本)
+```
+lib/
+├── main.dart              # 入口 + ProviderScope
+├── app.dart               # MaterialApp.router（主题 + 路由）
+├── core/                  # 主题、配色（五行色）、路由
+│   ├── app_colors.dart    #   对应 Vue 的 tokens.css
+│   ├── theme.dart         #   暗色墨系 Material 3 主题
+│   └── app_router.dart    #   go_router 配置
+├── data/                  # 知识库（从 legacy_vue/src/data 迁移）
+├── domain/                # 题目生成逻辑（对应 useQuiz.ts）
+├── providers/             # Riverpod providers（进度/错题本等）
+├── features/              # 功能页面
+│   ├── home/              #   底部导航壳（学习/答题/挑战/我的）
+│   ├── study/             #   学习模式
+│   ├── quiz/              #   答题训练
+│   ├── challenge/         #   挑战模式
+│   └── profile/           #   统计 / 错题本
+└── shared/widgets/        # 共享组件（WuxingBadge 等）
+```
+
+## 状态管理
+
+Riverpod（`flutter_riverpod`）。Provider 定义放 `lib/providers/`，页面用 `ConsumerWidget` / `ConsumerStatefulWidget` 消费。
+
+## 持久化
+
+`shared_preferences`（对应 Vue 的 localStorage）。键名加版本后缀（如 `bazi-progress-v1`）。
+
+## 设计语言
+
+暗色墨系护眼专注。五行配色：木绿 / 火红 / 土黄 / 金灰 / 水蓝，定义在 `core/app_colors.dart`。
 
 ## 部署
 
-```bash
-npm run build && scp -r dist/* ali2shanghai:/var/www/bazi/
-```
+推送 `main` 分支 → GitHub Actions 自动构建 release APK → Actions 页面下载 artifact 安装。
 
-域名 `bazi.2018to.top`，nginx 独立 server block，certbot HTTPS。SSH 前需先跑 `whitelist-ip`。
+## 数据迁移来源
 
-## 题库
-
-8 大 scope: `tiangan | dizhi | canggan | relations | lunming | xingming | advanced | all`
-
-关系题和论命题支持子筛选 (`RelationFilter`, `LunmingFilter`)。题目在 `useQuiz.ts` 中生成（非静态数据）。
+`legacy_vue/src/data/*.ts` 是题库知识源，需 1:1 迁移为 Dart 常量。范围：天干、地支、藏干、地支关系、格局、论命、姓名学、子平真诠（8 大 scope，约 5700 行）。
