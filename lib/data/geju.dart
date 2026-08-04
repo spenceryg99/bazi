@@ -1,5 +1,9 @@
 enum GejuCategory { zheng, wai }
 
+extension GejuCategoryX on GejuCategory {
+  String get label => this == GejuCategory.zheng ? '正格' : '外格';
+}
+
 class Geju {
   final String name;
   final GejuCategory category;
